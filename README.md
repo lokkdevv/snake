@@ -23,3 +23,6 @@ make run     # Launches the game from the bin folder
 - ```src/```: Source code files.
 - ```bin/```: Compiled executable.
 - ```dependencies/```: Local raylib headers and libraries.
+
+## License
+- MIT license
