@@ -1,5 +1,15 @@
 # snake+ (Windows)
 
+```
+                         _              
+                        | |         _   
+         ___ _ __   __ _| | _____ _| |_ 
+        / __| '_ \ / _` | |/ / _ \_   _|
+        \__ \ | | | (_| |   <  __/ |_|  
+        |___/_| |_|\__,_|_|\_\___|      
+                                                  
+```
+
 A minimalist Snake clone built with **C** and **raylib**. It is a snake clone but with modern graphics and powerups. It will also include modding abilities in the future.
 
 ## Requirements
