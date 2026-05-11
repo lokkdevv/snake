@@ -1,3 +1,5 @@
+- AI was used in this project for debugging when desperate.
+
 # snake+ (Windows)
 
 ```
