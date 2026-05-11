@@ -6,8 +6,9 @@
 #define windowName "snake"
 
 #define zoom 20
-#define gridIntervalX windowW/zoom
-#define gridIntervalY windowH/zoom
+#define gridIntervalX (windowW/zoom)
+#define gridIntervalY (windowH/zoom)
+#define gridArea (gridIntervalX*gridIntervalY)
 
 ////////////////////////////////////////////
 const Color backCLR = {6, 214, 160, 255};
@@ -32,37 +33,49 @@ int main()
 	SetTargetFPS(60);
 
 	char gameOver = 0;
+	char changedDirection = 0;
+
+	int Delta = 0;
 
 	int frameCounter = 0;
-	int moveInterval = 6;
+	int moveInterval = 8;
 
 	Vector2 head = {0, 0};
 	Vector2 direction = {0, 0};
 	Vector2 food = {0};
 
+	Vector2 body[gridArea] = {0};
+	int bodyIndex = 0;
+
 	spawnFood(&food, head);
 	while (!WindowShouldClose())
 	{
+		Delta = GetFrameTime();
+
 		// Input //
-		if      (IsKeyPressed(KEY_W) && direction.y!=1)
+		if      (IsKeyPressed(KEY_W) && direction.y!=1 && !changedDirection)
 		{
 			direction.x = 0;
 			direction.y = -1;
+			changedDirection = 1;
 		}
-		else if (IsKeyPressed(KEY_S) && direction.y!=-1)
+		else if (IsKeyPressed(KEY_S) && direction.y!=-1 && !changedDirection)
 		{
 			direction.x = 0;
 			direction.y = 1;
+			changedDirection = 1;
 		}
-		else if (IsKeyPressed(KEY_A) && direction.x!=1)
+		else if (IsKeyPressed(KEY_A) && direction.x!=1 && !changedDirection)
 		{
 			direction.x = -1;
 			direction.y = 0;
+			changedDirection = 1;
 		}
-		else if (IsKeyPressed(KEY_D) && direction.x!=-1)
+		else if (IsKeyPressed(KEY_D) && direction.x!=-1 && !changedDirection)
 		{
 			direction.x = 1;
 			direction.y = 0;
+			changedDirection = 1;
 		}
 		if (IsKeyPressed(KEY_R))
 		{
@@ -71,6 +84,7 @@ int main()
 			direction = zeroState;
 			gameOver = 0;
 			spawnFood(&food, head);
+			changedDirection = 0;
 		}
 		///////////
 
@@ -87,9 +101,11 @@ int main()
 		if (food.x == head.x && food.y == head.y)
 		{
 			spawnFood(&food, head);
+			body[bodyIndex].x = head.x - direction.x;
+			body[bodyIndex].y = head.y - direction.y;
+			bodyIndex++;
 		}
 		///////////////
-
 
 		// Movement //
 		frameCounter++;
@@ -97,7 +113,19 @@ int main()
 		{
 			head.x += direction.x * gridIntervalX;
 			head.y += direction.y * gridIntervalY;
+			for (int i = 0; i < bodyIndex; i++)
+			{
+				if (i==0)
+				{
+					body[i].x = head.x - direction.x;
+					body[i].y = head.y + direction.y;
+					continue;
+				}
+				body[i].x = body[i-1].x;
+				body[i].y = body[i-1].y;
+			}
 			frameCounter = 0;
+			changedDirection = 0;
 		}
 		//////////////
 
@@ -108,7 +136,10 @@ int main()
 
 		DrawRectangle(food.x, food.y, gridIntervalX, gridIntervalY, foodCLR);
 		DrawRectangle(head.x, head.y, gridIntervalX, gridIntervalY, headCLR);
-		printf("food.x=%i, food.y=%i\n", food.x, food.y);
+		for (int i = 0; i < bodyIndex; i++)
+		{
+			DrawRectangle(body[i].x, body[i].y, gridIntervalX, gridIntervalY, bodyCLR);
+		}
 
 		if (gameOver)
 		{
